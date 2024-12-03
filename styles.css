@@ -15,7 +15,7 @@ body {
 .piano-container {
     display: flex;
     justify-content: center;
-    align-items: flex-end;
+    /* align-items: flex-end; */
     position: relative;
 }
 
@@ -43,8 +43,9 @@ body {
     width: 30px;
     margin-left: -15px;
     margin-right: -15px;
+    /* position: absolute; */
+    top: 0;
     z-index: 1;
-    position: relative;
 }
 
 .black-key span {
