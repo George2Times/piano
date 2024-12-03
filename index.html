@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Piano</title>
     <link rel="stylesheet" href="styles.css">
+    <title>Virtual Piano</title>
 </head>
-
 <body>
     <div class="container">
-        <h1>Virtual Piano</h1>
+        <!-- <h1>Virtual Piano</h1> -->
         <div class="button-container">
             <button onclick="renderPiano(1)">1 Octave Piano</button>
             <button onclick="renderPiano(3)">3 Octave Piano</button>
         </div>
-        <div class="piano-container" id="piano"></div>
+        <div id="piano" class="piano-container"></div>
+        <!-- <div class="controls">
+            <label for="volume">Volume:</label>
+            <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+        </div> -->
+        <footer class="footer">
+            <p>Virtual Piano by Jerzy Dziubel | <a href="https://github.com/George2Times/piano">GitHub Repo</a></p>
+        </footer>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.35/Tone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.34/Tone.min.js"></script>
     <script src="script.js"></script>
 </body>
-
 </html>
