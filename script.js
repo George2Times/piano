@@ -72,12 +72,11 @@ function renderPiano(octaves) {
     ];
 
     for (let i = 0; i < octaves; i++) {
-        const octaveNumber = octaves === 1 ? i + 4 : i + 3; // Start from C4 for 1 octave, C3 for 3 octaves
         notes.forEach(({ note, key, black }) => {
             const keyDiv = document.createElement('div');
             keyDiv.classList.add('key');
             keyDiv.classList.add(black ? 'black-key' : 'white-key');
-            keyDiv.dataset.note = `${note}${octaveNumber}`;
+            keyDiv.dataset.note = `${note}${i + 3}`;
 
             // Set key label only for the main octave or if there is only one octave
             if (octaves === 1 || (octaves === 3 && i === 1)) {
@@ -87,9 +86,25 @@ function renderPiano(octaves) {
                 keyDiv.style.color = black ? 'white' : 'black';
             }
 
-            keyDiv.addEventListener('mousedown', () => startNotePlaying(note + octaveNumber, key));
-            keyDiv.addEventListener('mouseup', () => stopNotePlaying(note + octaveNumber, key));
-            keyDiv.addEventListener('mouseleave', () => stopNotePlaying(note + octaveNumber, key));
+            // Add mouse event listeners
+            keyDiv.addEventListener('mousedown', () => startNotePlaying(note + (i + 3), key));
+            keyDiv.addEventListener('mouseup', () => stopNotePlaying(note + (i + 3), key));
+            keyDiv.addEventListener('mouseleave', () => stopNotePlaying(note + (i + 3), key));
+
+            // Add touch event listeners for mobile
+            keyDiv.addEventListener('touchstart', (event) => {
+                event.preventDefault(); // Prevent touch from triggering mouse events
+                startNotePlaying(note + (i + 3), key);
+            });
+            keyDiv.addEventListener('touchend', (event) => {
+                event.preventDefault(); // Prevent touch from triggering mouse events
+                stopNotePlaying(note + (i + 3), key);
+            });
+            keyDiv.addEventListener('touchcancel', (event) => {
+                event.preventDefault(); // Prevent touch from triggering mouse events
+                stopNotePlaying(note + (i + 3), key);
+            });
+
             pianoContainer.appendChild(keyDiv);
         });
     }
