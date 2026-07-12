@@ -1,3 +1,11 @@
 # Ignore all .ogg and .wav files in the samples directory
 samples/*.ogg
 samples/*.wav
+
+# Ignore downloaded sample-pack archives (e.g. from nbrosowsky/tonejs-instruments)
+# so a full zip of the pack doesn't get committed alongside the extracted samples
+samples/*.zip
+
+# Node tooling (used only by the test suite; the app itself has no dependencies)
+node_modules/
+
