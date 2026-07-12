@@ -37,16 +37,25 @@ To run the project locally, follow these steps:
 
 ## Usage
 - **Playing Notes**: You can use either the mouse to click on the keys or the keyboard for corresponding notes.
-- **Keyboard Mapping**:
-  - White keys are mapped to: A, S, D, F, G, H, J
-  - Black keys are mapped to: W, E, T, Y, U
+- **Keyboard Mapping** (matches `script.js`; the middle octave is always active, and A/L reach one note below/above it when the 3-octave view is shown):
+  - White keys: A (B3), S (C4), D (D4), F (E4), G (F4), H (G4), J (A4), K (B4), L (C5)
+  - Black keys: E (C#4), R (D#4), Y (F#4), U (G#4), I (A#4)
 - **Switching Octaves**: Use the "1 Octave Piano" and "3 Octave Piano" buttons to toggle between different views.
 
 ## File Structure
 - `index.html`: Main HTML file to load the project.
 - `styles.css`: Contains all the styles for the piano layout and appearance.
+- `piano-logic.js`: Pure, dependency-free key-layout and keyboard-mapping logic shared by `script.js` and the test suite.
 - `script.js`: Main JavaScript file handling key rendering, key presses, and sound generation.
 - `samples/`: Directory containing piano sound samples (`.mp3` format).
+- `tests/`: Node test suite (`node:test`) covering `piano-logic.js`.
+
+## Testing
+This project has a small Node-based test suite (no external dependencies, just Node's built-in test runner) covering the key-layout and keyboard-mapping logic in `piano-logic.js`:
+```sh
+npm test
+```
+Requires Node.js 18+ (built-in `node:test` module).
 
 ## .gitignore
 The `.gitignore` file has been set up to exclude unnecessary files from version control:
