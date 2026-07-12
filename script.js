@@ -58,30 +58,16 @@ function renderPiano(octaves) {
     const pianoContainer = document.getElementById('piano');
     pianoContainer.innerHTML = ''; // Clear previous piano keys
 
-    const notes = [
-        // { note: 'B', key: 'A', black: false }, // New left key
-        { note: 'C', key: 'S', black: false },
-        { note: 'C#', key: 'E', black: true }, // Updated to be bound to 'E'
-        { note: 'D', key: 'D', black: false },
-        { note: 'D#', key: 'R', black: true }, // Updated to be bound to 'R'
-        { note: 'E', key: 'F', black: false },
-        { note: 'F', key: 'G', black: false },
-        { note: 'F#', key: 'Y', black: true }, // Updated to be bound to 'Y'
-        { note: 'G', key: 'H', black: false },
-        { note: 'G#', key: 'U', black: true },
-        { note: 'A', key: 'J', black: false },
-        { note: 'A#', key: 'I', black: true }, // Updated to be bound to 'I'
-        { note: 'B', key: 'K', black: false },
-        // { note: 'C', key: 'L', black: false } // New right key
-    ];
+    const notes = PianoLogic.NOTE_LAYOUT;
 
     for (let i = 0; i < octaves; i++) {
-        const octaveNumber = octaves === 1 ? i + 4 : i + 3; // Start from C4 for 1 octave, C3 for 3 octaves
         notes.forEach(({ note, key, black }) => {
+            const noteId = PianoLogic.getNoteId(note, octaves, i);
+
             const keyDiv = document.createElement('div');
             keyDiv.classList.add('key');
             keyDiv.classList.add(black ? 'black-key' : 'white-key');
-            keyDiv.dataset.note = `${note}${octaveNumber}`;
+            keyDiv.dataset.note = noteId;
 
             // Set key label only for the main octave or if there is only one octave
             if (octaves === 1 || (octaves === 3 && i === 1)) {
@@ -89,33 +75,38 @@ function renderPiano(octaves) {
 
                 // Set different text colors for black and white keys
                 keyDiv.style.color = black ? 'white' : 'black';
-            } 
+            }
             else if (octaves === 3 && i === 0 && note === 'B') {
                 keyDiv.textContent = 'A';
                 keyDiv.style.color = 'black';
-            } 
+            }
             else if (octaves === 3 && i === 2 && note === 'C') {
                 keyDiv.textContent = 'L';
                 keyDiv.style.color = 'black';
             }
 
-            // Add mouse event listeners
-            keyDiv.addEventListener('mousedown', () => startNotePlaying(note + octaveNumber, key));
-            keyDiv.addEventListener('mouseup', () => stopNotePlaying(note + octaveNumber, key));
-            keyDiv.addEventListener('mouseleave', () => stopNotePlaying(note + octaveNumber, key));
+            // Add mouse event listeners.
+            // NOTE: the tracking key passed to start/stopNotePlaying must be
+            // the full note id (e.g. "C3"), not the bare letter label (e.g.
+            // "S"). The letter label is shared by every octave of the same
+            // note, so using it as the activeSynths key previously made
+            // pressing e.g. C3 block C4 and C5 from playing at the same time.
+            keyDiv.addEventListener('mousedown', () => startNotePlaying(noteId, noteId));
+            keyDiv.addEventListener('mouseup', () => stopNotePlaying(noteId, noteId));
+            keyDiv.addEventListener('mouseleave', () => stopNotePlaying(noteId, noteId));
 
             // Add touch event listeners for mobile
             keyDiv.addEventListener('touchstart', (event) => {
                 event.preventDefault(); // Prevent touch from triggering mouse events
-                startNotePlaying(note + octaveNumber, key);
+                startNotePlaying(noteId, noteId);
             });
             keyDiv.addEventListener('touchend', (event) => {
                 event.preventDefault(); // Prevent touch from triggering mouse events
-                stopNotePlaying(note + octaveNumber, key);
+                stopNotePlaying(noteId, noteId);
             });
             keyDiv.addEventListener('touchcancel', (event) => {
                 event.preventDefault(); // Prevent touch from triggering mouse events
-                stopNotePlaying(note + octaveNumber, key);
+                stopNotePlaying(noteId, noteId);
             });
 
             pianoContainer.appendChild(keyDiv);
@@ -123,49 +114,20 @@ function renderPiano(octaves) {
     }
 }
 
-function handleKeyDown(event) {
-    const keyMap = {
-        'a': 'B3', // Bind B3 to 'A'
-        's': 'C4',
-        'e': 'C#4', // Bind C#4 to 'E'
-        'd': 'D4',
-        'r': 'D#4', // Bind D#4 to 'R'
-        'f': 'E4',
-        'g': 'F4',
-        'y': 'F#4', // Bind F#4 to 'Y'
-        'h': 'G4',
-        'u': 'G#4',
-        'j': 'A4',
-        'i': 'A#4', // Bind A#4 to 'I'
-        'k': 'B4',
-        'l': 'C5' // Bind C5 to 'L'
-    };
+// Single source of truth for the keyboard-key -> note mapping, shared by
+// both handlers below so they can't drift out of sync with each other
+// (previously each kept its own copy of this object).
+const KEY_MAP = PianoLogic.buildKeyMap();
 
-    const note = keyMap[event.key.toLowerCase()];
+function handleKeyDown(event) {
+    const note = KEY_MAP[event.key.toLowerCase()];
     if (note && !activeSynths[event.key]) {
         startNotePlaying(note, event.key);
     }
 }
 
 function handleKeyUp(event) {
-    const keyMap = {
-        'a': 'B3',
-        's': 'C4',
-        'e': 'C#4',
-        'd': 'D4',
-        'r': 'D#4',
-        'f': 'E4',
-        'g': 'F4',
-        'y': 'F#4',
-        'h': 'G4',
-        'u': 'G#4',
-        'j': 'A4',
-        'i': 'A#4',
-        'k': 'B4',
-        'l': 'C5'
-    };
-
-    const note = keyMap[event.key.toLowerCase()];
+    const note = KEY_MAP[event.key.toLowerCase()];
     if (note && activeSynths[event.key]) {
         stopNotePlaying(note, event.key);
     }
