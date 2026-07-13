@@ -47,11 +47,3 @@ body {
     top: 0;
     z-index: 1;
 }
-
-.black-key span {
-    color: white; /* Set the color for black key labels */
-}
-  
-  .white-key span {
-    color: black; /* Set the color for white key labels */
-}
