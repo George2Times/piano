@@ -1,0 +1,5 @@
+{
+  "mode": "autonomous",
+  "tasks": ["must-have", "nice-to-have"],
+  "notes": "Pilot /AI/local config (2026-07-13) — overrides this repo's entry in MainAssistant/fleet/config.json (previously mode=excluded, 'no actionable backlog items') now that a real nice-to-have exists (see backlog.md)."
+}
