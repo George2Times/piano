@@ -38,26 +38,7 @@ gitignored now, so git will leave it alone. Delete it by hand if you want the di
 space back — but it's the archive the gitignored `.ogg`/`.wav` files came from, so
 you may want to keep it.
 
-## 2. The 47 unused `.mp3` files — I left them; overrule me if you disagree
+## 2. The 47 unused `.mp3` files — RESOLVED 2026-07-14: keeping them
 
-The 2026-07-12 hardening pass flagged that the `Tone.Sampler` in `script.js` only
-loads 38 of the 85 tracked `.mp3` files (`B2` plus `C3`–`C6`); the other 47 (octaves
-1, 7, 8 and most of 2) are never requested. I confirmed that's accurate.
-
-**I chose not to delete them**, because the numbers don't justify it:
-
-| | files | size |
-|---|---|---|
-| Used by the sampler | 38 | 6.5 MB |
-| Unused | 47 | **8.75 MB** |
-
-Deleting the unused ones reclaims **nothing** from `.git` (the blobs stay in history
-either way, exactly as with the zip) — it would only trim 8.75MB from a checkout.
-Against that: unlike the zip, these aren't an accident. They're the deliberate,
-complete C1–C8 sample pack, and they're precisely what you'd need the day the piano
-grows beyond its current C3–B5 range. That's a product decision, not repo hygiene,
-so I didn't make it for you.
-
-**If you want them gone anyway**, say so and it's a one-liner — or if you'd rather
-go the other way and *widen* the keyboard's range, the samples are already sitting
-there ready to be wired into the sampler's `urls` map.
+Decided: keep. They're the reserve for when the keyboard's range extends past the
+current C3–B5 — confirmed intentional, not clutter. No action needed.
