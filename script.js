@@ -120,16 +120,22 @@ function renderPiano(octaves) {
 const KEY_MAP = PianoLogic.buildKeyMap();
 
 function handleKeyDown(event) {
-    const note = KEY_MAP[event.key.toLowerCase()];
-    if (note && !activeSynths[event.key]) {
-        startNotePlaying(note, event.key);
+    // NOTE: the tracking key must be the lowercased key, matching the KEY_MAP
+    // lookup. Shift can be pressed or released mid-chord, so the same physical
+    // key can arrive as 's' on keydown and 'S' on keyup; tracking the raw
+    // event.key would then leave the note sustaining forever.
+    const key = event.key.toLowerCase();
+    const note = KEY_MAP[key];
+    if (note && !activeSynths[key]) {
+        startNotePlaying(note, key);
     }
 }
 
 function handleKeyUp(event) {
-    const note = KEY_MAP[event.key.toLowerCase()];
-    if (note && activeSynths[event.key]) {
-        stopNotePlaying(note, event.key);
+    const key = event.key.toLowerCase();
+    const note = KEY_MAP[key];
+    if (note && activeSynths[key]) {
+        stopNotePlaying(note, key);
     }
 }
 
