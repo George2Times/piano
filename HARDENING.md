@@ -54,6 +54,11 @@ manager, no framework, no existing tests.
    add `samples/*.zip` to `.gitignore` so this can't happen again by
    accident.
 
+   **Update (2026-07-13): resolved for the current tree.** The zip is no
+   longer tracked (commit `92836cf`, `git rm --cached` — the local copy
+   stays on disk). `.git` is unchanged; a history rewrite to reclaim the
+   blob is still pending an explicit go-ahead — see `FLEET_NOTES.md`.
+
    Related, smaller version of the same issue: the `Tone.Sampler` in
    `script.js` only ever references **38** of the **85** tracked `.mp3`
    files (it loads `B2` plus the full `C3`–`C6` range; everything in
@@ -62,6 +67,12 @@ manager, no framework, no existing tests.
    samples/*.mp3`). Same reasoning applies: not deleted here since it's
    pre-existing tracked content outside this pass's explicit scope, just
    flagged for you.
+
+   **Update (2026-07-13): deliberately kept.** The 47 unused files total
+   only 8.75MB (vs 6.5MB for the 38 in use), and deleting them would
+   reclaim nothing from `.git` since the blobs stay in history — so the
+   only gain is 8.75MB of checkout, against losing the complete C1–C8
+   pack that a wider keyboard range would need. See `FLEET_NOTES.md`.
 
 6. **`README.md` setup instructions.** "Open `index.html` directly in your
    browser" is technically not always reliable: browsers' `fetch()` (which
