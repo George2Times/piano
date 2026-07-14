@@ -8,11 +8,17 @@
 </head>
 <body>
     <div class="container">
-        <div class="button-container">
-            <button onclick="renderPiano(1)">1 Octave Piano</button>
-            <button onclick="renderPiano(3)">3 Octave Piano</button>
-        </div>
-        <div id="piano" class="piano-container"></div>
+        <header>
+            <h1>Virtual Piano</h1>
+        </header>
+        <main>
+            <div class="button-container" role="group" aria-label="Octave range">
+                <button type="button" onclick="renderPiano(1)">1 Octave Piano</button>
+                <button type="button" onclick="renderPiano(3)">3 Octave Piano</button>
+            </div>
+            <p id="piano-status" class="status" role="status">Loading piano samples…</p>
+            <div id="piano" class="piano-container" role="group" aria-label="Piano keys"></div>
+        </main>
         <footer class="footer">
             <p>Virtual Piano by Jerzy Dziubel | <a href="https://github.com/George2Times/piano">GitHub Repo</a></p>
         </footer>
