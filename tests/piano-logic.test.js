@@ -33,10 +33,10 @@ test('NOTE_LAYOUT keys are unique, single letters', () => {
     }
 });
 
-test('buildKeyMap matches the documented keyboard layout', () => {
+test('buildKeyMap(3) matches the documented keyboard layout', () => {
     // This is a regression lock on the mapping described in README.md:
     // white keys A S D F G H J K L, black keys E R Y U I.
-    assert.deepEqual(PianoLogic.buildKeyMap(), {
+    assert.deepEqual(PianoLogic.buildKeyMap(3), {
         a: 'B3',
         s: 'C4',
         e: 'C#4',
@@ -52,6 +52,39 @@ test('buildKeyMap matches the documented keyboard layout', () => {
         k: 'B4',
         l: 'C5'
     });
+});
+
+test('buildKeyMap(1) omits the A/L shortcuts, which have no key on screen', () => {
+    // The 1-octave view only renders C4..B4, so B3 (a) and C5 (l) have no
+    // visual key. Binding them there played a note with nothing to show for it.
+    const map = PianoLogic.buildKeyMap(1);
+    assert.equal(map.a, undefined);
+    assert.equal(map.l, undefined);
+    assert.equal(Object.keys(map).length, 12);
+});
+
+test('every key in a key map resolves to a note the rendered view actually shows', () => {
+    for (const octaves of [1, 3]) {
+        const rendered = new Set();
+        for (let octaveOffset = 0; octaveOffset < octaves; octaveOffset++) {
+            for (const entry of PianoLogic.NOTE_LAYOUT) {
+                rendered.add(PianoLogic.getNoteId(entry.note, octaves, octaveOffset));
+            }
+        }
+        for (const [key, note] of Object.entries(PianoLogic.buildKeyMap(octaves))) {
+            assert.ok(
+                rendered.has(note),
+                `'${key}' plays ${note}, which the ${octaves}-octave view does not render`
+            );
+        }
+    }
+});
+
+test('getNoteLabel spells sharps out for screen readers', () => {
+    assert.equal(PianoLogic.getNoteLabel('C4'), 'C 4');
+    assert.equal(PianoLogic.getNoteLabel('C#4'), 'C sharp 4');
+    assert.equal(PianoLogic.getNoteLabel('A#5'), 'A sharp 5');
+    assert.equal(PianoLogic.getNoteLabel('B3'), 'B 3');
 });
 
 test('getStartOctave centers 1-octave mode on C4 and 3-octave mode on C3', () => {

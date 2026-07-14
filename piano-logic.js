@@ -43,14 +43,21 @@
     // Builds the single keyboard-key -> note lookup used by both the
     // keydown and keyup handlers, so the two handlers can never drift
     // out of sync with each other.
-    function buildKeyMap() {
+    //
+    // The A/L shortcuts are only included for the 3-octave layout, which is
+    // the only view that renders a B3 and a C5 key. In the 1-octave view they
+    // are left out on purpose: including them there made a/l play a note with
+    // no on-screen key to show it had happened.
+    function buildKeyMap(octaves) {
         var map = {};
         NOTE_LAYOUT.forEach(function (entry) {
             map[entry.key.toLowerCase()] = entry.note + '4';
         });
-        Object.keys(EXTRA_KEY_MAP).forEach(function (key) {
-            map[key] = EXTRA_KEY_MAP[key];
-        });
+        if (octaves === 3) {
+            Object.keys(EXTRA_KEY_MAP).forEach(function (key) {
+                map[key] = EXTRA_KEY_MAP[key];
+            });
+        }
         return map;
     }
 
@@ -67,11 +74,23 @@
         return note + (getStartOctave(octaves) + octaveOffset);
     }
 
+    // Spoken form of a note id, for the accessible name of a key.
+    // "C#4" -> "C sharp 4"; a screen reader reads the raw id as "C pound 4"
+    // or just "C4" with the sharp silently dropped, which makes the black
+    // keys indistinguishable from the white ones.
+    function getNoteLabel(noteId) {
+        var octave = noteId.slice(-1);
+        var name = noteId.slice(0, -1);
+        var isSharp = name.indexOf('#') !== -1;
+        return name.charAt(0) + (isSharp ? ' sharp ' : ' ') + octave;
+    }
+
     return {
         NOTE_LAYOUT: NOTE_LAYOUT,
         EXTRA_KEY_MAP: EXTRA_KEY_MAP,
         buildKeyMap: buildKeyMap,
         getStartOctave: getStartOctave,
-        getNoteId: getNoteId
+        getNoteId: getNoteId,
+        getNoteLabel: getNoteLabel
     };
 });
