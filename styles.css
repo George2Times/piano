@@ -8,21 +8,44 @@ body {
     padding: 20px;
 }
 
+h1 {
+    font-size: 24px;
+    margin: 0 0 20px;
+}
+
 .button-container {
     margin-bottom: 20px;
 }
 
+.status {
+    min-height: 1.2em; /* Reserve the line so the piano doesn't jump when it clears */
+    margin: 0 0 12px;
+    font-size: 14px;
+}
+
 .piano-container {
     display: flex;
+    /* `safe center` keeps the piano centred while it fits, but falls back to
+       flush-left once it overflows — plain `center` would push the leftmost
+       keys past the scroll origin, where they can't be scrolled back into view. */
     justify-content: center;
+    justify-content: safe center;
     /* align-items: flex-end; */
     position: relative;
+    /* The 3-octave piano is ~1050px wide and must not be squeezed down to fit a
+       phone: shrinking it left ~17px-wide keys, far under the ~44px touch-target
+       guidance. It scrolls sideways instead, at full size. */
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px 0 12px; /* Room for the scrollbar, and a strip to drag-scroll by */
+    touch-action: pan-x;
 }
 
 .key {
     border: 1px solid #000;
     height: 200px;
     width: 50px;
+    flex: 0 0 auto; /* Never shrink below a usable touch target — scroll instead */
     display: inline-flex;
     justify-content: center;
     align-items: flex-end; /* Adjust to align text at the bottom */
@@ -31,6 +54,24 @@ body {
     user-select: none;
     font-size: 14px; /* Adjust as needed */
     font-weight: bold;
+    cursor: pointer;
+}
+
+.key:focus-visible {
+    /* Drawn inside the key so it isn't hidden under the overlapping black keys,
+       and lifted above them so a focused white key's outline stays visible. */
+    outline: 3px solid #1a73e8;
+    outline-offset: -3px;
+    z-index: 2;
+}
+
+/* Samples still downloading: the keys can't play yet, so say so. */
+.piano-container.is-loading {
+    opacity: 0.55;
+}
+
+.piano-container.is-loading .key {
+    cursor: progress;
 }
 
 .white-key {
@@ -46,4 +87,22 @@ body {
     /* position: absolute; */
     top: 0;
     z-index: 1;
+}
+
+/* Phone-sized viewports: trim the keys to the smallest size that still clears
+   the ~44px touch-target guidance, so less sideways scrolling is needed. Black
+   keys stay narrower than that by nature; they keep their half-white-key
+   overlap so the octave still reads as a piano. */
+@media (max-width: 600px) {
+    .key {
+        height: 170px;
+        width: 44px;
+    }
+
+    .black-key {
+        height: 100px;
+        width: 28px;
+        margin-left: -14px;
+        margin-right: -14px;
+    }
 }
